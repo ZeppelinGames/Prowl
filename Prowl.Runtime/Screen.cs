@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See the LICENSE file in the project root for details.
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Veldrid;
 using Veldrid.Sdl2;
@@ -44,10 +45,10 @@ public static class Screen
         set => InternalWindow.Height = value;
     }
 
-    public static Vector2Int Position
+    public static Vector2 Position
     {
         get => new Vector2Int(InternalWindow.X, InternalWindow.Y);
-        set { InternalWindow.X = value.x; InternalWindow.Y = value.y; }
+        set { InternalWindow.X = (int)value.x; InternalWindow.Y = (int)value.y; }
     }
 
     public static Rect ScreenRect => new(Position, Size);
@@ -118,6 +119,15 @@ public static class Screen
 
             Update?.Invoke();
         }
+    }
+
+    public static void FromEditorWindow(EditorScreenData window)
+    {
+        Width = window.Width;
+        Height = window.Height;
+
+        InternalWindow.BorderVisible = window.BorderVisible;
+        WindowState = window.WindowState;
     }
 
     public static void Close() => InternalWindow.Close();

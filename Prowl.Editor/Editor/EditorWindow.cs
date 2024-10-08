@@ -14,6 +14,12 @@ public class EditorWindow
     protected string Title = "Title";
     internal readonly int _id;
 
+    protected virtual EditorScreenData ScreenData { get; } = new EditorScreenData() {
+        Width = 256,
+        Height = 256,
+        BorderVisible = true,
+    };
+
     protected virtual bool Center { get; } = false;
     protected virtual double Width { get; } = 256;
     protected virtual double Height { get; } = 256;
@@ -30,7 +36,6 @@ public class EditorWindow
     private double _width, _height;
     public double _x, _y;
     private bool _wasDragged;
-
 
     public bool bAllowTabs = true;
 

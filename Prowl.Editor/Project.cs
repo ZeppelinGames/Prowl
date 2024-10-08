@@ -100,7 +100,6 @@ public class Project
             Runtime.Debug.LogError($"Invalid project '{project.Name}' at path '{project.ProjectPath}'. Validate that all core project directories are intact.");
             return false;
         }
-
         Active = project;
 
         project.ProjectDirectory.LastAccessTime = DateTime.Now;

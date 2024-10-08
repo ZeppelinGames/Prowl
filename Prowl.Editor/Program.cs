@@ -83,6 +83,13 @@ public static class Program
                 if (!s_createdDefaultWindows)
                 {
                     s_createdDefaultWindows = true;
+                    Screen.FromEditorWindow(new EditorScreenData()
+                    {
+                        Width = 1024,
+                        Height = 640,
+                        WindowState  = Veldrid.WindowState.Maximized,
+                        BorderVisible = true
+                    });
                     //new EditorMainMenubar();
                     var console = EditorGuiManager.DockWindowTo(new ConsoleWindow(), null, Docking.DockZone.Center);
                     var assetbrowser = EditorGuiManager.DockWindowTo(new AssetsBrowserWindow(), console, Docking.DockZone.Center);

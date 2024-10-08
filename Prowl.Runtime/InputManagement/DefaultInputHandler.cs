@@ -158,7 +158,7 @@ public class DefaultInputHandler : IInputHandler, IDisposable
             return;
         }
 
-        Vector2Int center = Screen.Position + (Screen.Size / new Vector2Int(2, 2));
+        Vector2Int center = Screen.Position + ((Vector2)Screen.Size / new Vector2(2, 2));
         Vector2Int centerDelta = mousePosition - center;
 
         Screen.InternalWindow.SetMousePosition(new Vector2(center.x, center.y));

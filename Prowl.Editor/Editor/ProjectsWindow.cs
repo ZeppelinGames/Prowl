@@ -27,7 +27,6 @@ public class ProjectsWindow : EditorWindow
     private FileDialog _dialog;
     private FileDialogContext _dialogContext;
 
-
     protected override bool Center { get; } = true;
     protected override double Width { get; } = 1024;
     protected override double Height { get; } = 640;
@@ -37,6 +36,14 @@ public class ProjectsWindow : EditorWindow
     protected override bool LockSize => true;
     protected override double Padding => 0;
 
+    protected override EditorScreenData ScreenData { get; } = new EditorScreenData()
+    {
+        Width = 1024,
+        Height = 640,
+        BorderVisible = false,
+        WindowState = Veldrid.WindowState.Normal,
+    };
+
     public ProjectsWindow()
     {
         Title = FontAwesome6.Book + " Project Window";
@@ -45,12 +52,45 @@ public class ProjectsWindow : EditorWindow
             (FontAwesome6.RectangleList + "  Projects", DrawProjectsTab),
             (FontAwesome6.BookOpen + "  Learn", () => {})
         ];
+
+        Screen.FromEditorWindow(this.ScreenData);
     }
 
+    Vector2 dragOffset;
     protected override void Draw()
     {
         if (Project.HasProject)
             isOpened = false;
+
+        // Titlebar
+        using (gui.Node("_Titlebar").ExpandWidth().MaxHeight(40).Padding(10, 10).Enter())
+        {
+            gui.Draw2D.DrawText(Title, 20, gui.CurrentNode.LayoutData.Rect, Color.white);
+
+            var titleInteract = gui.GetInteractable();
+            // yeh its buggin'
+            if (gui.IsNodeActive())
+            {
+                Screen.Position = new Vector2(Input.MousePosition.x, Input.MousePosition.y);
+            }
+
+            using (gui.Node("_CloseButton").Width(20).Height(20).Left(Offset.Percentage(1f, -20)).Enter())
+            {
+                // Close application
+                if (gui.IsNodePressed())
+                    Application.Quit();
+
+                gui.Draw2D.DrawText(FontAwesome6.Xmark, gui.CurrentNode.LayoutData.Rect, gui.IsNodeHovered() ? EditorStylePrefs.Instance.Hovering : EditorStylePrefs.Instance.LesserText);
+            }
+            using (gui.Node("_MinimiseButton").Width(20).Height(20).Left(Offset.Percentage(1f, -48)).Enter())
+            {
+                // Close application
+                if (gui.IsNodePressed())
+                    Screen.WindowState = Veldrid.WindowState.Minimized;
+
+                gui.Draw2D.DrawText(FontAwesome6.Minimize, gui.CurrentNode.LayoutData.Rect, gui.IsNodeHovered() ? EditorStylePrefs.Instance.Hovering : EditorStylePrefs.Instance.LesserText);
+            }
+        }
 
         using (gui.Node("Content").ExpandWidth().Layout(LayoutType.Row).ScaleChildren().Enter())
         {
@@ -223,7 +263,7 @@ public class ProjectsWindow : EditorWindow
                 }
 
                 col = gui.IsNodeActive() ? EditorStylePrefs.Instance.Highlighted :
-                    gui.IsNodeHovered() ? EditorStylePrefs.Instance.Highlighted * 0.8f : EditorStylePrefs.Instance.Highlighted;
+                gui.IsNodeHovered() ? EditorStylePrefs.Instance.Highlighted * 0.8f : EditorStylePrefs.Instance.Highlighted;
             }
 
             gui.Draw2D.DrawRectFilled(gui.CurrentNode.LayoutData.Rect, col, (float)EditorStylePrefs.Instance.WindowRoundness, 4);
@@ -460,7 +500,7 @@ public class ProjectsWindow : EditorWindow
                     AssetDatabase.OpenPath(project.ProjectDirectory);
                     closePopup = true;
                 }
-                if(EditorGUI.StyledButton("Remove from list"))
+                if (EditorGUI.StyledButton("Remove from list"))
                 {
                     ProjectCache.Instance.RemoveProject(project);
                     closePopup = true;
